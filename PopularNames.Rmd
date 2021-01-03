@@ -1,0 +1,23 @@
+---
+title: "PopularNames"
+author: "John Haser"
+date: "1/3/2021"
+output: html_document
+---
+
+```{r}
+BabyNames = DataComputing::BabyNames
+
+YearTotal = BabyNames %>% group_by(year) %>% summarise(yearTotal = sum(count))
+
+ObservedNames = c("Matthew", "John", "Gabrielle", "Ashley", "Steven")
+
+FilteredNames = BabyNames %>% select(year, name, count) %>% group_by(year, name) %>% filter(name %in% ObservedNames)
+
+NamePopularity = merge(YearTotal, FilteredNames) %>% mutate(percentage = count / yearTotal)
+
+NamePopularity %>% 
+  ggplot(aes(x = year, y = percentage, group = name)) +
+  geom_line( size = 1, alpha = 0.5, aes(color = name)) +
+  ylab("Popularity") + xlab("Year") + ggtitle("Popularity of Names Over Time")
+```
